@@ -4,7 +4,7 @@ author: "Mason Dugas"
 date: "`r Sys.Date()`"
 output:
   pdf_document: default
-  html_document: default
+  html_docuemt: default
 ---
 
 ```{r setup, include=FALSE}
@@ -15,13 +15,16 @@ This report evaluates the performance differences between starting goalies and b
 
 #### The Data  
 |  
+|  
 The analysis uses NHL game data from the 2017-2024 seasons, excluding 2020 due to COVID, including details about where shots were taken and whether they resulted in goals. To explore the possibility that goalies may perform better or worse from certain areas of the ice, the ice was divided into 12 zones based on shot locations. Simulated matchups were created where each team’s starting and backup goalies faced every other team’s offense, and the number of goals each goalie would allow was predicted.  
 
-#### Key Results  
+#### Key Results
+|  
 |  
 The results show that starting goalies consistently outperform backups, as they allowed fewer predicted goals in every simulated matchup. Importantly, the same goalie won every single simulated game for their team, regardless of the offensive strategies or shot locations they faced. This finding suggests that the use of spatial zones did not have a significant impact on the results, as the overall performance of a goalie determined the outcome more than their ability to handle shots from specific areas of the ice.  
 
-#### Conclusions and Future Considerations  
+#### Conclusions and Future Considerations
+|  
 |  
 This analysis confirms that NHL teams are correct in relying on their starting goalies, as starters consistently outperform backups. The results indicate that the use of shot zones did not reveal any meaningful differences between goalies, as performance was consistent across all zones. This is likely because NHL goalies are highly skilled and well-rounded, leaving little room for significant weaknesses to emerge in specific areas.  
 

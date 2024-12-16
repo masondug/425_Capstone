@@ -65,14 +65,17 @@ The results suggest that while starting goalies are often the most reliable choi
 This report evaluates the performance differences between starting goalies and backup goalies in the NHL. The goal is to determine whether starting goalies consistently perform better than backups and to explore whether differences in performance could be linked to specific areas of the ice where shots are taken. This analysis provides insights that can help teams make more informed decisions about which goalie to rely on during games.  
 
 #### The Data  
+|   
 |  
 The analysis uses NHL game data from the 2017-2024 seasons, excluding 2020 due to COVID, including details about where shots were taken and wether they resulted in goals. To explore the possibility that goalies may perform better or worse from certain areas of the ice, the ice was divided into 12 zones based on shot locations. Simulated matchups were created where each team’s starting and backup goalies faced every other team’s offense, and the number of goals each goalie would allow was predicted.  
 
 #### Key Results  
+|   
 |  
 The results show that starting goalies consistently outperform backups, as they allowed fewer predicted goals in every simulated matchup. Importantly, the same goalie won every single simulated game for their team, regardless of the offensive strategies or shot locations they faced. This finding suggests that the use of spatial zones did not have a significant impact on the results, as the overall performance of a goalie determined the outcome more than their ability to handle shots from specific areas of the ice.  
 
 #### Conclusions and Future Considerations  
+|   
 |  
 This analysis confirms that NHL teams are correct in relying on their starting goalies, as starters consistently outperform backups. The results indicate that the use of shot zones did not reveal any meaningful differences between goalies, as performance was consistent across all zones. This is likely because NHL goalies are highly skilled and well-rounded, leaving little room for significant weaknesses to emerge in specific areas.  
 
@@ -219,6 +222,8 @@ The plot shows that the variance of goals in each cluster closely aligns with th
 ### Zero-Inflated Poisson Model Analysis
 
 #### Model Description
+|   
+|  
 A **zero-inflated Poisson (ZIP)** regression model was used to analyze the data. The ZIP model is appropriate for count data with an excess of zeros, where the zeros can arise from two distinct processes:
 1. Structural zeros (e.g., no goals occurred because no valid opportunities existed).
 2. Zeros that arise naturally from a Poisson process.
@@ -228,11 +233,15 @@ The ZIP model combines:
 - A **zero-inflation model** (logistic regression) that predicts the probability of structural zeros.
 
 #### Assumptions
+|   
+|  
 - **Poisson Distribution**: The count component assumes that the mean equals the variance. If this is not satisfied (e.g., overdispersion), the ZIP model may need adjustment (e.g., to a negative binomial).
 - **Independence of Observations**: Each observation is assumed to be independent.
 - **Excess Zeros**: The model assumes that some zeros come from a different process than the Poisson distribution.
 
 #### Observations, Predictors, and Outcome
+|   
+|  
 - **Observations (Rows of X)**:  
   Each observation represents a unique combination of game ID, shooting team, goalie team, cluster (shot zone), and game date.  
 - **Predictors (Columns of X)**:  
@@ -244,11 +253,15 @@ The ZIP model combines:
   - **Zero-Inflation Component**: Binary variable `zero_inflated` (1 if goals = 0, 0 otherwise).  
 
 #### Selecting Predictors
+|   
+|  
 To identify the most important predictors for the model, LASSO (Least Absolute Shrinkage and Selection Operator) regression was applied. LASSO is a regularization technique that selects predictors by shrinking less important coefficients to zero, effectively reducing the model complexity and preventing overfitting. This method was used separately for both the count and zero-inflation components of the ZIP model to select predictors relevant to each process.  
 
 After applying LASSO, an initial model was fit using the selected predictors. To refine the model further, predictors with a significance level above 0.25 (based on p-values) were removed. This threshold was chosen to ensure that the final model focused on predictors that contributed meaningfully to explaining the variation in the data, while still allowing for exploratory insights. By iteratively refining the model, the final ZIP regression captured both the structural and count-based aspects of goal-scoring effectively, leading to more robust and interpretable results.
 
 #### Zero-Inflated Poisson Model Formula
+|   
+|  
 The ZIP model can be described as follows:
 
 $$
@@ -264,46 +277,45 @@ Where:
 - $\lambda_i$: Mean of the Poisson distribution for positive counts.  
 
 ##### Binary Component (Zero-Inflation)
+|  
+|  
 The zero-inflation component predicts the probability of structural zeros:
 
-$$
+\begin{align*}
 \text{logit}(\pi_i) = -1 
-+ \beta_1 (\text{shotsOnGoal.offense}) 
+&+ \beta_1 (\text{shotsOnGoal.offense}) 
 + \beta_2 (\text{xFroze.offense}) 
 + \beta_3 (\text{xPlayContinuedInZone.offense}) \\
-\phantom{\text{logit}(\pi_i) = -1} 
-+ \beta_4 (\text{shotsOnGoal.goalie}) 
-+ \beta_5 (\text{xGoals.goalie})
+&+ \beta_4 (\text{shotsOnGoal.goalie}) 
++ \beta_5 (\text{xGoals.goalie}) 
 + \beta_6 (\text{xFroze.goalie})
-$$
+\end{align*}
 
 ##### Count Component
+|  
+|  
 The count component models the expected number of goals:
 
-$$
+\begin{align*}
 \log(\lambda_i) = -1 
-+ \gamma_1 (\text{shotsOnGoal.offense}) 
+&+ \gamma_1 (\text{shotsOnGoal.offense}) 
 + \gamma_2 (\text{xFroze.offense}) 
 + \gamma_3 (\text{xPlayContinuedInZone.offense}) \\
-\phantom{\log(\lambda_i) = -1} 
-+ \gamma_4 (\text{shotsOnGoal.goalie}) 
-+ \gamma_5 (\text{xGoals.goalie})
+&+ \gamma_4 (\text{shotsOnGoal.goalie}) 
++ \gamma_5 (\text{xGoals.goalie}) 
 + \gamma_6 (\text{xFroze.goalie}) \\ 
-\phantom{\log(\lambda_i) = -1} 
-+ \gamma_7 (\text{xGoals.offense}) 
-+ \gamma_8 (\text{xShotWasOnGoal.offense})
+&+ \gamma_7 (\text{xGoals.offense}) 
++ \gamma_8 (\text{xShotWasOnGoal.offense}) 
 + \gamma_9 (\text{shots.goalie}) \\
-\phantom{\log(\lambda_i) = -1} 
-+ \gamma_{10} (\text{xPlayStopped.offense}) 
-+ \gamma_{11} (\text{goals\_scored})
+&+ \gamma_{10} (\text{xPlayStopped.offense}) 
++ \gamma_{11} (\text{goals\_scored}) 
 + \gamma_{12} (\text{savePct.offense}) \\ 
-\phantom{\log(\lambda_i) = -1} 
-+ \gamma_{13} (\text{xPlayContinuedInZone.goalie}) 
+&+ \gamma_{13} (\text{xPlayContinuedInZone.goalie}) 
 + \gamma_{14} (\text{xPlayStopped.goalie}) 
 + \gamma_{15} (\text{xShotWasOnGoal.goalie}) \\
-\phantom{\log(\lambda_i) = -1} 
-+ (1 | \text{cluster:goalieNameForShot})
-$$
+&+ (1 | \text{cluster:goalieNameForShot})
+\end{align*}
+
 
 #### Coefficients Interpretation
 - **Count Component**:  
